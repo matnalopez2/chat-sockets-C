@@ -1,55 +1,61 @@
-# Prerequisites
-*.d
+# Binarios ejecutables
+servidor
+cliente
+Servidor/servidor
+Cliente/cliente
 
-# Object files
+# Archivos objeto
 *.o
-*.ko
 *.obj
-*.elf
 
-# Linker output
-*.ilk
-*.map
-*.exp
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
+# Archivos de depuración
 *.dSYM/
 *.su
 *.idb
 *.pdb
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+# Core dumps
+core
+core.*
+*.core
 
-# debug information files
-*.dwo
+# Archivos temporales del editor
+*~
+*.swp
+*.swo
+*.swn
+.*.sw?
+*.bak
+*.tmp
+
+# IDEs y editores
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# Valgrind
+*.log
+vgcore.*
+massif.out.*
+callgrind.out.*
+
+# Compilación
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Logs y outputs
+*.out
+*.log
+output.txt
+
+# Archivos de prueba temporales
+test_output/
+temp/
+
+# Archivos de sistema
+.fuse_hidden*
