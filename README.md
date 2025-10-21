@@ -1,8 +1,60 @@
 # Chat Simple 1:1 con Sockets en C
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Language: C](https://img.shields.io/badge/Language-C-blue.svg)](https://en.wikipedia.org/wiki/C_(programming_language))
+[![Platform: Linux](https://img.shields.io/badge/Platform-Linux-green.svg)](https://www.linux.org/)
+
 Ejemplo simple y didáctico de chat cliente-servidor usando sockets TCP.
 
 **Versión simplificada usando la librería `network.h` de la cátedra.**
+
+## Inicio Rápido
+
+```bash
+# 1. Clonar o descargar el proyecto
+git clone <url-del-repo>
+cd chat-sockets-C
+
+# 2. Compilar
+make
+
+# 3. Terminal 1 - Iniciar servidor
+cd Servidor
+./servidor 5000
+
+# 4. Terminal 2 - Iniciar cliente
+cd Cliente
+./cliente 127.0.0.1 5000
+
+# 5. Escribir /quit para salir
+```
+
+## Tabla de Contenidos
+
+- [Inicio Rápido](#inicio-rápido)
+- [Características](#características)
+- [¿Qué hace?](#qué-hace)
+- [Requisitos](#requisitos)
+- [Compilar](#compilar)
+- [Usar](#usar)
+- [¿Cómo funciona?](#cómo-funciona)
+- [Conceptos Clave](#conceptos-clave)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Ejercicios Propuestos](#ejercicios-propuestos)
+- [Errores Comunes y Soluciones](#errores-comunes-y-soluciones)
+- [Preguntas Frecuentes](#preguntas-frecuentes)
+- [Para Seguir Aprendiendo](#para-seguir-aprendiendo)
+- [Autor](#autor)
+- [Licencia](#licencia)
+
+## Características
+
+✨ **Simple y educativo**: Código claro y fácil de entender  
+🔧 **Librería simplificada**: Usa `network.h` para abstraer la complejidad  
+💬 **Chat por turnos**: Servidor y cliente alternan mensajes  
+🚪 **Salida elegante**: Comando `/quit` para cerrar la conexión  
+📝 **Bien documentado**: Comentarios y README completo  
+🔄 **Fácil de compilar**: Un simple `make` y listo
 
 ## ¿Qué hace?
 
@@ -10,6 +62,17 @@ Ejemplo simple y didáctico de chat cliente-servidor usando sockets TCP.
 - **Cliente**: Se conecta al servidor y chatéa (chat por turnos)
 
 Es un chat **sincrónico**: el servidor recibe y luego envía, el cliente envía y luego recibe.
+
+## Requisitos
+
+- **Sistema Operativo**: Linux, macOS, o WSL (Windows Subsystem for Linux)
+- **Compilador**: GCC (GNU Compiler Collection)
+- **Herramientas**: Make (opcional, pero recomendado)
+
+Para verificar que tenés GCC instalado:
+```bash
+gcc --version
+```
 
 ## Compilar
 
@@ -21,9 +84,25 @@ make
 
 Esto compila ambos programas usando la librería `network.h` de la cátedra.
 
+Para ver todos los comandos disponibles:
+
+```bash
+make help
+```
+
+Comandos del Makefile disponibles:
+
+```bash
+make          # Compila servidor y cliente
+make servidor # Solo compila el servidor
+make cliente  # Solo compila el cliente
+make clean    # Elimina archivos compilados
+make help     # Muestra ayuda
+```
+
 También podés compilar manualmente:
 
-  ```bash
+```bash
 # Servidor
 gcc Servidor/servidor.c util/network.c -o Servidor/servidor -I./util
 
@@ -67,23 +146,41 @@ Tú: _
 
 ### Ejemplo de Conversación
 
-**Cliente:**
+**Terminal 1 - Servidor:**
 ```
+=== SERVIDOR DE CHAT ===
+Puerto: 5000
+Esperando cliente...
+
+Cliente conectado!
+Escribe '/quit' para salir
+─────────────────────────────
+
+Cliente: Hola servidor!
+Tú: Hola cliente! ¿Cómo estás?
+Cliente: Muy bien, gracias
+Tú: Excelente!
+Cliente cerró la conexión.
+
+Servidor cerrado.
+```
+
+**Terminal 2 - Cliente:**
+```
+=== CLIENTE DE CHAT ===
+Conectando a 127.0.0.1:5000...
+Conectado al servidor!
+Escribe '/quit' para salir
+─────────────────────────────
+
 Tú: Hola servidor!
 Servidor: Hola cliente! ¿Cómo estás?
 Tú: Muy bien, gracias
 Servidor: Excelente!
 Tú: /quit
 Cerrando conexión...
-```
 
-**Servidor:**
-```
-Cliente: Hola servidor!
-Tú: Hola cliente! ¿Cómo estás?
-Cliente: Muy bien, gracias
-Tú: Excelente!
-Cliente cerró la conexión.
+Cliente cerrado.
 ```
 
 ### Cómo Salir
@@ -325,6 +422,7 @@ chat-sockets-C/
 │   ├── network.h          (11 líneas) - Header de la librería
 │   └── network.c          (118 líneas) - Implementación
 ├── Makefile               (49 líneas)
+├── LICENSE                (MIT License)
 └── README.md              (este archivo)
 ```
 
@@ -361,42 +459,139 @@ chat-sockets-C/
 
 ## Errores Comunes y Soluciones
 
-### "Address already in use"
-**Problema:** El puerto todavía está ocupado.  
-**Solución:** Esperá 1-2 minutos o usá otro puerto.
+### 1. "Address already in use"
+**Problema:** El puerto todavía está ocupado por una conexión anterior.  
+**Solución:** 
+- Esperá 1-2 minutos para que el sistema operativo libere el puerto
+- O usá otro puerto diferente
 
 ```bash
 ./servidor 5001  # Usar otro puerto
 ```
 
-### "Connection refused"
-**Problema:** El servidor no está corriendo.  
-**Solución:** Asegurate de iniciar el servidor primero.
+Para ver qué proceso está usando el puerto:
+```bash
+lsof -i :5000  # Linux/macOS
+netstat -ano | findstr :5000  # Windows
+```
 
-### El cliente no puede conectar
-**Problema:** IP o puerto incorrectos.  
+### 2. "Connection refused"
+**Problema:** El servidor no está corriendo o no está escuchando en ese puerto.  
+**Solución:** 
+- Asegurate de iniciar el servidor PRIMERO
+- Verificá que el servidor esté escuchando en el puerto correcto
+- Verificá que no haya un firewall bloqueando la conexión
+
+### 3. El cliente no puede conectar
+**Problema:** IP o puerto incorrectos, o problema de red.  
 **Solución:** Verificá que coincidan:
 ```bash
-# Servidor
+# Terminal 1 - Servidor
+cd Servidor
 ./servidor 5000
 
-# Cliente (debe usar el mismo puerto)
+# Terminal 2 - Cliente (debe usar el mismo puerto)
+cd Cliente
 ./cliente 127.0.0.1 5000
 ```
 
+**Para conexión local:** Usá siempre `127.0.0.1` o `localhost`  
+**Para conexión remota:** Usá la IP real de la máquina del servidor
+
+### 4. No se compila / errores de compilación
+**Problema:** Faltan dependencias o el compilador no está instalado.  
+**Solución:**
+```bash
+# Instalar GCC en Ubuntu/Debian
+sudo apt-get install build-essential
+
+# Instalar GCC en macOS
+xcode-select --install
+
+# Verificar instalación
+gcc --version
+make --version
+```
+
+### 5. "Segmentation fault" al ejecutar
+**Problema:** Error de puntero o buffer overflow.  
+**Solución:** Asegurate de estar usando la versión correcta del código. Si modificaste el código, revisá:
+- Límites de arrays
+- Punteros nulos
+- Llamadas a funciones con parámetros correctos
+
 ## Preguntas Frecuentes
 
-**¿Por qué es por turnos?**  
-Porque no usamos threads. Solo hay un flujo de ejecución que alterna entre enviar y recibir.
+### ¿Por qué es por turnos?
+Porque no usamos **threads** (hilos). El programa tiene un solo flujo de ejecución que alterna entre enviar y recibir. 
 
-**¿Puedo hablar con computadoras remotas?**  
-Sí! Reemplazá `127.0.0.1` con la IP de la otra computadora. Asegurate de que el firewall permita la conexión.
+El servidor hace:
+1. `recv()` → Espera mensaje del cliente
+2. `send()` → Envía respuesta
 
-**¿Qué pasa si envío mensajes muy largos?**  
-Los mensajes están limitados a `BUF_SIZE` (1024 bytes). Para enviar mensajes más largos necesitarías fragmentarlos.
+El cliente hace:
+1. `send()` → Envía mensaje
+2. `recv()` → Espera respuesta
 
-**¿Es seguro?**  
-No. Los mensajes van en texto plano por la red. Para un chat real necesitarías cifrado (TLS/SSL).
+Para hacer un chat simultáneo (donde ambos puedan escribir al mismo tiempo), necesitarías usar threads o `select()`/`poll()`.
+
+### ¿Puedo hablar con computadoras remotas?
+**¡Sí!** Reemplazá `127.0.0.1` con la IP de la otra computadora.
+
+**Ejemplo:**
+```bash
+# Servidor en la máquina con IP 192.168.1.100
+./servidor 5000
+
+# Cliente desde otra máquina
+./cliente 192.168.1.100 5000
+```
+
+**Requisitos:**
+- Ambas máquinas deben estar en la misma red (o tener conectividad)
+- El firewall debe permitir la conexión en el puerto elegido
+- El servidor debe estar corriendo antes que el cliente se conecte
+
+### ¿Qué pasa si envío mensajes muy largos?
+Los mensajes están limitados a `BUF_SIZE` (1024 bytes por defecto). Si enviás un mensaje más largo:
+- `fgets()` solo va a leer los primeros 1024 caracteres
+- El resto queda en el buffer de entrada para la próxima lectura
+
+Para manejar mensajes más largos necesitarías:
+- Aumentar `BUF_SIZE`
+- Implementar fragmentación de mensajes
+- Usar un protocolo con headers que indique el tamaño total
+
+### ¿Es seguro?
+**No.** Los mensajes van en **texto plano** por la red. Cualquiera que intercepte el tráfico puede leer los mensajes.
+
+Para un chat real y seguro necesitarías:
+- ✅ **Cifrado TLS/SSL** (como HTTPS para web)
+- ✅ **Autenticación** (verificar identidades)
+- ✅ **Validación de entrada** (prevenir inyecciones)
+- ✅ **Rate limiting** (prevenir abuso)
+
+Este proyecto es **solo educativo** para aprender sockets.
+
+### ¿Puedo usarlo para múltiples clientes?
+Actualmente **no**. El servidor acepta un solo cliente a la vez.
+
+Para múltiples clientes necesitarías:
+1. **Opción 1 - Threads:** Crear un thread por cada cliente
+2. **Opción 2 - Multiplexing:** Usar `select()`, `poll()` o `epoll()`
+3. **Opción 3 - Fork:** Crear un proceso hijo por cada cliente
+
+Esto es un ejercicio avanzado propuesto al final del README.
+
+### ¿Funciona en Windows?
+**No directamente.** Este código usa sockets POSIX (Linux/Unix).
+
+**Opciones para Windows:**
+- ✅ **WSL (Windows Subsystem for Linux)** - Recomendado
+- ✅ **Cygwin** - Emula entorno POSIX
+- ⚠️ **Winsock** - Requiere reescribir el código para usar la API de Windows
+
+WSL es la forma más fácil y ya está instalado en Windows 10/11 modernos.
 
 ## Para Seguir Aprendiendo
 
@@ -406,11 +601,40 @@ No. Los mensajes van en texto plano por la red. Para un chat real necesitarías 
 3. **Broadcast** → Mensajes a todos los clientes
 4. **Protocolo** → Definir formato de mensajes (JSON, etc)
 
-### Recursos
-- `man socket` - Documentación del sistema
-- `man recv` - Sobre recepción de datos
-- `man send` - Sobre envío de datos
-- [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/) - Tutorial excelente en inglés
+### Recursos Recomendados
+
+**Documentación del Sistema:**
+```bash
+man socket    # Documentación de sockets
+man recv      # Recepción de datos
+man send      # Envío de datos
+man bind      # Asociar socket a puerto
+man listen    # Marcar socket como servidor
+man accept    # Aceptar conexiones
+man connect   # Conectar a un servidor
+```
+
+**Tutoriales y Guías:**
+- 📘 [Beej's Guide to Network Programming](https://beej.us/guide/bgnet/) - La biblia de programación de redes en C (inglés)
+- 📗 [Linux Socket Programming in C](https://www.geeksforgeeks.org/socket-programming-cc/) - Ejemplos prácticos
+- 📕 [TCP/IP Sockets in C](https://www.amazon.com/TCP-Sockets-Practical-Programmers-Kaufmann/dp/0128016507) - Libro completo (si querés profundizar)
+
+**Herramientas Útiles:**
+```bash
+netstat -tuln     # Ver puertos en uso
+lsof -i :5000     # Ver qué usa el puerto 5000
+tcpdump           # Capturar tráfico de red
+wireshark         # Analizar tráfico (GUI)
+nc (netcat)       # Herramienta de red versátil
+telnet            # Probar conexiones TCP
+```
+
+**Temas Relacionados:**
+- 🔹 Threads en C (pthread)
+- 🔹 Multiplexing (select, poll, epoll)
+- 🔹 Protocolos de red (HTTP, FTP, etc.)
+- 🔹 Seguridad (TLS/SSL, OpenSSL)
+- 🔹 Serialización de datos (JSON, Protocol Buffers)
 
 ## Notas Finales
 
@@ -418,6 +642,8 @@ No. Los mensajes van en texto plano por la red. Para un chat real necesitarías 
 - ✅ **Librería de la cátedra**: Simplifica el manejo de sockets
 - ✅ **Manejo básico de errores**: Suficiente para entender
 - ✅ **Multiplataforma**: Funciona en Linux, macOS y WSL
+- ✅ **Código limpio**: Con comentarios y estructura clara
+- ✅ **Fácil de extender**: Base sólida para agregar funcionalidades
 
 Este proyecto es perfecto como **primer contacto con sockets**. Una vez que lo entiendas, podés avanzar a versiones más complejas con threads, múltiples clientes, y protocolos más sofisticados.
 
@@ -427,6 +653,14 @@ Este proyecto es perfecto como **primer contacto con sockets**. Una vez que lo e
 
 La mejor forma de aprender es modificar el código y ver qué pasa. Probá romper cosas, arreglarlas, y agregar funcionalidades.
 
+## Autor
+
+**Matías N. López** - 2025
+
+Proyecto educativo para enseñanza de programación en redes con sockets en C.
+
 ## Licencia
 
-Código educativo para aprendizaje. Usalo como quieras.
+Este proyecto está bajo la **MIT License**. Ver el archivo `LICENSE` para más detalles.
+
+En resumen: podés usar, modificar y distribuir este código libremente, incluso con fines comerciales.
